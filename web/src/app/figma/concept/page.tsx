@@ -123,7 +123,10 @@ export default function FigmaConceptLanding() {
                 className="relative rounded-3xl overflow-hidden shadow-2xl" style={{ height: 700 }}>
                 <ZipMap
                   center={CHICAGO_CENTER}
-                  pins={DEMO_PINS}
+                  pins={pinsVisible ? DEMO_PINS : []}
+                  searchZip={mapSearchZip}
+                  onZipChange={() => setPinsVisible(true)}
+                  onGoClick={navigateToDiscover}
                   style={{ width: '100%', height: '100%' }}
                 />
               </motion.div>
