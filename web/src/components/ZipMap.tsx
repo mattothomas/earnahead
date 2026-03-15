@@ -35,6 +35,10 @@ interface ZipMapProps {
   initialBounds?: [[number, number], [number, number]]; // [[minLng, minLat], [maxLng, maxLat]]
   /** If provided, the map will search this ZIP immediately after loading */
   initialZip?: string;
+  /** Changing this to a valid 5-digit ZIP triggers a geocode search (for external control) */
+  searchZip?: string;
+  /** If provided, the Go button calls this instead of geocoding (e.g. navigate to results) */
+  onGoClick?: (zip: string) => void;
 }
 
 // Mapbox Geocoding API
@@ -386,6 +390,8 @@ export default function ZipMap({
   style = {},
   initialBounds,
   initialZip,
+  searchZip,
+  onGoClick,
 }: ZipMapProps) {
   const containerRef   = useRef<HTMLDivElement>(null);
   const mapRef         = useRef<mapboxgl.Map | null>(null);
@@ -646,7 +652,27 @@ export default function ZipMap({
   const runZipSearchRef = useRef(runZipSearch);
   useEffect(() => { runZipSearchRef.current = runZipSearch; });
 
-  const handleZipSearch = () => runZipSearch(zipInput.trim());
+  // ── External searchZip control ────────────────────────────────────────────
+  const prevSearchZipRef = useRef(initialZip ?? "");
+  useEffect(() => {
+    if (!searchZip || !ZIP_RE.test(searchZip)) return;
+    if (searchZip === prevSearchZipRef.current) return;
+    prevSearchZipRef.current = searchZip;
+    setZipInput(searchZip);
+    const map = mapRef.current;
+    if (!map) return;
+    if (map.isStyleLoaded()) runZipSearchRef.current(searchZip);
+    else map.once("load", () => runZipSearchRef.current(searchZip!));
+  }, [searchZip]);
+
+  const handleZipSearch = () => {
+    const zip = zipInput.trim();
+    if (onGoClick && ZIP_RE.test(zip)) {
+      onGoClick(zip);
+    } else {
+      runZipSearch(zip);
+    }
+  };
 
   // ── No-token fallback ─────────────────────────────────────────────────────
   if (!TOKEN) {

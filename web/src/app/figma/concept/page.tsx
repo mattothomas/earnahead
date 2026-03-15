@@ -21,6 +21,10 @@ const DEMO_PINS: ZipMapPin[] = [
 
 export default function FigmaConceptLanding() {
   const [zipCode, setZipCode] = useState("");
+  // mapSearchZip: drives the ZipMap search — set when zip is fully typed (5 digits)
+  const [mapSearchZip, setMapSearchZip] = useState("");
+  // pins hidden until the map has geocoded at least once
+  const [pinsVisible, setPinsVisible] = useState(false);
   const router = useRouter();
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
@@ -35,9 +39,18 @@ export default function FigmaConceptLanding() {
     return () => { clearInterval(e); clearInterval(o); };
   }, []);
 
+  // Auto-trigger map search when hero ZIP reaches 5 digits
+  useEffect(() => {
+    if (zipCode.length === 5) setMapSearchZip(zipCode);
+  }, [zipCode]);
+
+  const navigateToDiscover = (zip: string) => {
+    if (zip.length === 5) router.push(`/figma/discover/${zip}`);
+  };
+
   const handleSearch = (ev: React.FormEvent) => {
     ev.preventDefault();
-    if (zipCode.length === 5) router.push(`/figma/discover/${zipCode}`);
+    navigateToDiscover(zipCode);
   };
 
   return (

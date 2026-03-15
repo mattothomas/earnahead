@@ -1,7 +1,17 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Heart, BarChart3, Users, LayoutDashboard } from "lucide-react";
 
 export default function FigmaLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
+  // Concept has its own independent layout — don't double-wrap
+  if (pathname.startsWith("/figma/concept")) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="figma-theme min-h-screen flex flex-col">
       <header className="border-b bg-white sticky top-0 z-50" style={{ borderColor: '#E2E8F0' }}>
@@ -23,7 +33,7 @@ export default function FigmaLayout({ children }: { children: React.ReactNode })
               <Link href="/figma/stories" className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#64748B', textDecoration: 'none' }}>
                 <Users className="w-4 h-4" /> Stories
               </Link>
-<Link href="/" className="text-xs px-3 py-1.5 rounded" style={{ background: '#F5F7F9', color: '#64748B', textDecoration: 'none' }}>
+              <Link href="/" className="text-xs px-3 py-1.5 rounded" style={{ background: '#F5F7F9', color: '#64748B', textDecoration: 'none' }}>
                 ← Picker
               </Link>
             </div>
