@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Search, ArrowRight, MapPin, DollarSign, Clock, TrendingUp, Heart, Shield, Users, Zap } from "lucide-react";
+import { Search, ArrowRight, MapPin, DollarSign, TrendingUp, Heart, Shield, Users, Zap } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
-import { mockOpportunities, opportunityTypes } from "@/lib/figma-opportunities";
 import ZipMap, { MapPin as ZipMapPin } from "@/components/ZipMap";
 
 const CHICAGO_CENTER: [number, number] = [-87.6298, 41.8781];

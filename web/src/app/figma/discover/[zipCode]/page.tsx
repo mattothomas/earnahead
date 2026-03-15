@@ -5,6 +5,20 @@ import { MapPin, DollarSign, Clock, Shield, Filter, ChevronRight } from "lucide-
 import { motion } from "motion/react";
 import { mockOpportunities, Opportunity, opportunityTypes, calculateWeeklyEarnings } from "@/lib/figma-opportunities";
 import { useState } from "react";
+import ZipMap, { MapPin as ZipMapPin } from "@/components/ZipMap";
+
+const CHICAGO_CENTER: [number, number] = [-87.6298, 41.8781];
+
+const DEMO_PINS: ZipMapPin[] = [
+  { id: 1, lng: -87.6457, lat: 41.9267, label: "$110", color: "#C8861A" },
+  { id: 2, lng: -87.6324, lat: 41.8828, label: "$50",  color: "#9B3333" },
+  { id: 3, lng: -87.6219, lat: 41.8952, label: "$300", color: "#2A5BA8" },
+  { id: 4, lng: -87.6453, lat: 41.9432, label: "$95",  color: "#C8861A" },
+  { id: 5, lng: -87.6261, lat: 41.8826, label: "$8K+", color: "#2D7A5A" },
+  { id: 6, lng: -87.6329, lat: 41.8794, label: "$40",  color: "#9B3333" },
+  { id: 7, lng: -87.6670, lat: 41.8747, label: "$150", color: "#2A5BA8" },
+  { id: 8, lng: -87.6318, lat: 41.8817, label: "$175", color: "#6B4A9B" },
+];
 
 export default function DiscoverPage() {
   const { zipCode } = useParams<{ zipCode: string }>();
@@ -112,42 +126,19 @@ export default function DiscoverPage() {
 
           {/* Map & Listings */}
           <div className="col-span-2 space-y-6">
-            {/* Map Placeholder */}
+            {/* Map */}
             <motion.div
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-lg border border-border overflow-hidden h-96 relative"
+              className="rounded-lg border border-border overflow-hidden"
+              style={{ height: 384 }}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="w-12 h-12 text-secondary mx-auto mb-3" />
-                  <p className="text-muted-foreground font-medium">Interactive Map View</p>
-                  <p className="text-sm text-muted-foreground mt-1">{filteredOpportunities.length} locations near you</p>
-                </div>
-              </div>
-
-              <div className="absolute inset-0 pointer-events-none">
-                {filteredOpportunities.slice(0, 6).map((op, idx) => (
-                  <motion.div
-                    key={op.id}
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="absolute"
-                    style={{
-                      left: `${20 + (idx % 3) * 30}%`,
-                      top: `${25 + Math.floor(idx / 3) * 35}%`,
-                    }}
-                  >
-                    <div
-                      className="w-10 h-10 bg-secondary rounded-full shadow-lg flex items-center justify-center cursor-pointer pointer-events-auto hover:scale-110 transition-transform"
-                      onClick={() => setSelectedOpportunity(op)}
-                    >
-                      <MapPin className="w-5 h-5 text-white" />
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+              <ZipMap
+                center={CHICAGO_CENTER}
+                pins={DEMO_PINS}
+                initialZip={zipCode}
+                style={{ width: '100%', height: '100%' }}
+              />
             </motion.div>
 
             {/* Opportunity Listings */}
