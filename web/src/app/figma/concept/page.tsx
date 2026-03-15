@@ -5,6 +5,20 @@ import { useRouter } from "next/navigation";
 import { Search, ArrowRight, MapPin, DollarSign, Clock, TrendingUp, Heart, Shield, Users, Zap } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { mockOpportunities, opportunityTypes } from "@/lib/figma-opportunities";
+import ZipMap, { MapPin as ZipMapPin } from "@/components/ZipMap";
+
+const CHICAGO_CENTER: [number, number] = [-87.6298, 41.8781];
+
+const DEMO_PINS: ZipMapPin[] = [
+  { id: 1, lng: -87.6457, lat: 41.9267, label: "$110", color: "#C8861A" },
+  { id: 2, lng: -87.6324, lat: 41.8828, label: "$50",  color: "#9B3333" },
+  { id: 3, lng: -87.6219, lat: 41.8952, label: "$300", color: "#2A5BA8" },
+  { id: 4, lng: -87.6453, lat: 41.9432, label: "$95",  color: "#C8861A" },
+  { id: 5, lng: -87.6261, lat: 41.8826, label: "$8K+", color: "#2D7A5A" },
+  { id: 6, lng: -87.6329, lat: 41.8794, label: "$40",  color: "#9B3333" },
+  { id: 7, lng: -87.6670, lat: 41.8747, label: "$150", color: "#2A5BA8" },
+  { id: 8, lng: -87.6318, lat: 41.8817, label: "$175", color: "#6B4A9B" },
+];
 
 export default function FigmaConceptLanding() {
   const [zipCode, setZipCode] = useState("");
@@ -91,52 +105,15 @@ export default function FigmaConceptLanding() {
               </motion.div>
             </div>
 
-            {/* Right – Map Preview */}
+            {/* Right – Live Map Preview */}
             <div className="col-span-7 pt-8">
               <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                 className="relative rounded-3xl overflow-hidden shadow-2xl" style={{ height: 700 }}>
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #F5F7F9, rgba(245,247,249,0.5))' }}>
-                  <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #2E5C8A 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-                </div>
-                {mockOpportunities.slice(0, 4).map((opp, idx) => (
-                  <motion.div key={opp.id}
-                    initial={{ opacity: 0, scale: 0.8, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 0.5 + idx * 0.1, duration: 0.6 }}
-                    className="absolute bg-white rounded-2xl p-5 shadow-xl cursor-pointer hover:scale-105 transition-transform"
-                    style={{ border: '1px solid #E2E8F0', left: [15, 60, 25, 70][idx] + '%', top: [15, 25, 55, 65][idx] + '%', width: 280 }}>
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="w-2 h-2 rounded-full" style={{ background: '#6B8E7F' }} />
-                          <span className="text-xs font-medium uppercase tracking-wide" style={{ color: '#6B8E7F' }}>{opportunityTypes[opp.type].label}</span>
-                        </div>
-                        <h4 className="font-semibold text-sm" style={{ color: '#0A1628' }}>{opp.name}</h4>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs mb-3" style={{ color: '#64748B' }}>
-                      <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{opp.distance}mi</span>
-                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{opp.timeRequired}</span>
-                    </div>
-                    <div className="flex items-center justify-between pt-3" style={{ borderTop: '1px solid #E2E8F0' }}>
-                      <div>
-                        <p className="text-xs" style={{ color: '#64748B' }}>Compensation</p>
-                        <p className="text-lg font-bold" style={{ color: '#6B8E7F' }}>${opp.compensation}</p>
-                      </div>
-                      <button className="px-4 py-2 text-white rounded-lg text-xs font-medium" style={{ background: '#0A1628' }}>View</button>
-                    </div>
-                  </motion.div>
-                ))}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
-                  className="absolute bottom-6 left-6 right-6 bg-white rounded-2xl p-6 shadow-xl" style={{ border: '1px solid #E2E8F0' }}>
-                  <div className="grid grid-cols-3 gap-6">
-                    {[['Live Opportunities', '127', '#0A1628'], ['Avg. Earnings', '$280/wk', '#6B8E7F'], ['Radius', '5 miles', '#2E5C8A']].map(([label, val, color]) => (
-                      <div key={label}>
-                        <p className="text-sm mb-1" style={{ color: '#64748B' }}>{label}</p>
-                        <p className="text-2xl font-bold" style={{ color: color as string }}>{val}</p>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
+                <ZipMap
+                  center={CHICAGO_CENTER}
+                  pins={DEMO_PINS}
+                  style={{ width: '100%', height: '100%' }}
+                />
               </motion.div>
             </div>
           </div>
