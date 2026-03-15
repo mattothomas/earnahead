@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 /* ─── Data ─────────────────────────────────────────────────────────────── */
 // pctX / pctY = position as % of the skeleton image dimensions
@@ -142,7 +141,7 @@ function BodyFigure({ active }: { active: string | null }) {
 export default function SixPage() {
   const [activeChapter, setActiveChapter] = useState<string | null>(null);
   const [zip, setZip] = useState("");
-  const router = useRouter();
+  const [zipSubmitted, setZipSubmitted] = useState(false);
   const chapterRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   useEffect(() => {
@@ -163,7 +162,7 @@ export default function SixPage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (zip.length === 5) router.push(`/combined/map?zip=${zip}`);
+    if (zip.length === 5) setZipSubmitted(true);
   };
 
   const active = contributions.find((c) => c.id === activeChapter) ?? null;
@@ -300,12 +299,12 @@ export default function SixPage() {
               marks exactly where each contribution originates.
             </p>
 
-            <form onSubmit={handleSearch} style={{ display: "flex", maxWidth: 360, marginBottom: 20 }}>
+            <form onSubmit={handleSearch} style={{ display: "flex", maxWidth: 360, marginBottom: 12 }}>
               <input
                 type="text"
                 placeholder="Enter ZIP to find centers"
                 value={zip}
-                onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
+                onChange={(e) => { setZip(e.target.value.replace(/\D/g, "").slice(0, 5)); setZipSubmitted(false); }}
                 maxLength={5}
                 style={{
                   flex: 1, height: 50, padding: "0 18px",
@@ -334,7 +333,13 @@ export default function SixPage() {
               </button>
             </form>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 8 }}>
+            {zipSubmitted && (
+              <p style={{ fontSize: 11, color: "var(--text-3)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 16 }}>
+                Zip code integration has not been added yet.
+              </p>
+            )}
+
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: zipSubmitted ? 0 : 8 }}>
               <div style={{ width: 20, height: 1, background: "var(--text-3)" }} />
               <span style={{
                 fontSize: 10, color: "var(--text-3)",
@@ -540,7 +545,7 @@ export default function SixPage() {
               type="text"
               placeholder="ZIP code"
               value={zip}
-              onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
+              onChange={(e) => { setZip(e.target.value.replace(/\D/g, "").slice(0, 5)); setZipSubmitted(false); }}
               maxLength={5}
               style={{
                 flex: 1, height: 58, padding: "0 20px",
@@ -567,9 +572,15 @@ export default function SixPage() {
               Find Opportunities
             </button>
           </form>
-          <p style={{ fontSize: 11, color: "var(--text-3)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-            Free to browse · No account required
-          </p>
+          {zipSubmitted ? (
+            <p style={{ fontSize: 11, color: "var(--text-3)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              Zip code integration has not been added yet.
+            </p>
+          ) : (
+            <p style={{ fontSize: 11, color: "var(--text-3)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+              Free to browse · No account required
+            </p>
+          )}
         </div>
       </div>
 
